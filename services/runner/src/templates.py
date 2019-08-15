@@ -3,6 +3,10 @@ import yaml
 import jinja2
 
 
+def download_project():
+    pass
+
+
 def get_base_image(language):
     # TODO: Java, PHP, Go support
     if language in ["python", "python3", "python:3.7"]:
@@ -27,10 +31,6 @@ def format_image(deployment_config, template_file):
     template = templateEnv.get_template(template_file)
     outputText = template.render(
         base_image=get_base_image(deployment_config["language"]),
-        deployment_config
+        **deployment_config
     )
     print(outputText)
-
-
-def push_image(filename):
-    pass

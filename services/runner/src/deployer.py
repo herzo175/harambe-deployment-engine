@@ -6,6 +6,10 @@ import subprocess
 # TODO: delete resource (rio rm)
 
 
+def push_image():
+    pass
+
+
 def deploy(config):
     # NOTE: possibly configure script from options+template
     # TODO: namespaces

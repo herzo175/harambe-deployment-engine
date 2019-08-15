@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package deployments;
+
+service Deployments {
+  rpc Upload (UploadRequest) returns (UploadResponse) {}
+}
+
+message UploadRequest {
+  bytes deploymentZip = 1;
+}
+
+message UploadResponse {
+  string uploadedKey = 1;
+}

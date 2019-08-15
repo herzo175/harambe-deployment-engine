@@ -11,10 +11,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "hapi": "^18.1.0"
+    "@grpc/proto-loader": "^0.5.1",
+    "config": "^3.2.2",
+    "del": "^5.0.0",
+    "grpc": "^1.22.2",
+    "s3-client": "^4.4.2",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@types/hapi": "^18.0.2",
+    "@types/config": "0.0.34",
+    "@types/uuid": "^3.4.5",
     "typescript": "^3.5.3"
   }
 }

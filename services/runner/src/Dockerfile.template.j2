@@ -3,13 +3,10 @@ FROM {{ base_image }}
 WORKDIR /app
 
 ADD . .
-
 {% for step in build %}
 RUN {{ step }}
 {% endfor %}
-
 {% for port in ports %}
 EXPOSE {{ port }}
 {% endfor %}
-
 CMD {{ run }}

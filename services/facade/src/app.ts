@@ -1,26 +1,23 @@
-import * as Hapi from "hapi";
+import * as grpc from "grpc";
 
-const init = async () => {
-    const server = new Hapi.Server({
-        port: 8080,
-        host: "0.0.0.0"
-    })
+import { deploymentsProto, s3Client, upload } from "./routes/deployments";
+import { ConfigManager } from "./config/appConfig";
 
-    server.route({
-        method: "GET",
-        path: "/",
-        handler: (request, h) => {
-            return 'Hello World!';
+function main() {
+    const server = new grpc.Server();
+    const config = new ConfigManager();
+
+    const storageClient = s3Client(config);
+
+    server.addService(
+        deploymentsProto().Deployments.service,
+        {
+            upload: upload(storageClient, config)
         }
-    });
+    );
 
-    await server.start();
-    console.log('Server running on %s', server.info.uri);
-};
+    server.bind("0.0.0.0:8080", grpc.ServerCredentials.createInsecure()); // TODO: connection pool
+    server.start();
+}
 
-process.on('unhandledRejection', (err) => {
-    console.log(err);
-    process.exit(1);
-});
-
-init();
+main();
