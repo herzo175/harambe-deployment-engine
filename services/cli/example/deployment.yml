@@ -1,5 +1,8 @@
+project: "example-project"
 deployment:
   - name: "example"
+    min_instances: 1
+    max_instances: 1
     # TODO: support language versioning
     # TODO: support language: "dockerfile"
     language: "python"

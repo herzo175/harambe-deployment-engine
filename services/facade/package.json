@@ -15,11 +15,14 @@
     "config": "^3.2.2",
     "del": "^5.0.0",
     "grpc": "^1.22.2",
+    "mongoose": "^5.6.13",
     "s3-client": "^4.4.2",
+    "ulid": "^2.3.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/config": "0.0.34",
+    "@types/mongoose": "^5.5.17",
     "@types/uuid": "^3.4.5",
     "typescript": "^3.5.3"
   }

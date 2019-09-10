@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package projects;
+
+service Projects {
+    rpc CreateProject (CreateProjectRequest) returns (CreateProjectResponse) {}
+    rpc GetProjectByID (GetProjectByIDRequest) returns (ProjectResponse) {}
+    rpc GetProjects (GetProjectsRequest) returns (ProjectsResponse) {}
+}
+
+message CreateProjectRequest {
+    string name = 1;
+    string language = 2;
+}
+
+message CreateProjectResponse {
+    string projectID = 1;
+}
+
+message GetProjectByIDRequest {
+    string projectID = 1;
+}
+
+message ProjectResponse {
+    string projectID = 1;
+    string name = 2;
+}
+
+message GetProjectsRequest {
+    string name = 1;
+}
+
+message ProjectsResponse {
+    repeated ProjectResponse projects = 1;
+}

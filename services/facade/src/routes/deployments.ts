@@ -21,7 +21,7 @@ const deploymentsProto: () => any = () => {
     return grpc.loadPackageDefinition(packageDefinition).deployments;
 }
 
-const s3Client = (config : ConfigManager) => {
+const s3Client = (config : ConfigManager) => { // NOTE: move to clients?
     return s3.createClient({
         maxAsyncS3: 20,     // this is the default
         s3RetryCount: 3,    // this is the default
@@ -38,7 +38,7 @@ const s3Client = (config : ConfigManager) => {
 }
 
 const upload = (s3Client : any, config: ConfigManager) => { // TODO: interface for storage client
-    return (call, callback) => {
+    return (call: any, callback: any) => {
         // NOTE: use+create deployments folder if not exists?
         const deploymentFile = `deployment-${uuid()}.zip`;
 
