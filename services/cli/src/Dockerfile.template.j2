@@ -2,7 +2,7 @@ FROM {{ base_image }}
 
 WORKDIR /app
 
-ADD . .
+ADD {{ directory }} .
 {% for step in build %}
 RUN {{ step }}
 {% endfor %}

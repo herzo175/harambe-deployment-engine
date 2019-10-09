@@ -13,18 +13,15 @@ def init(directory):
     args = parser.parse_args()
 
 
-def deploy(directory):
+def deploy(project_id, directory):
     # zip project deployment.yml is in
     # NOTE: obscure zip file?
-    # TODO: trim trailing / in source dir
-    output_zip = f"{directory}/deployment.zip"
+    deployment_file_path = upload.find_file(directory, "deployment.yml")
+    assert deployment_file_path is not None, "missing deployment.yml"
 
-    assert upload.find_file(directory, "deployment.yml") is not None, "missing deployment.yml"
+    upload.create_deployments(project_id, deployment_file_path, directory)
 
-    upload.zip_source(directory, output_zip)
-    upload.upload_deployment(output_zip)
-
-    os.remove(output_zip)
+    # os.remove(output_zip)
     # NOTE: facade will invoke deployment runner
 
 

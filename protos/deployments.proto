@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package deployments;
+
+service Deployments {
+  rpc Upload (UploadRequest) returns (CreateImageResponse) {}
+  rpc GetImage (GetImageRequest) returns (Image) {}
+}
+
+message UploadRequest {
+  bytes imageZip = 1;
+  string projectID = 2; // TODO: infer from project name and user token
+  string jobName = 3;
+  string dockerfile = 4;
+  string directory = 5;
+  string language = 6;
+  repeated string buildSteps = 8;
+  string run = 9;
+}
+
+message CreateImageResponse {
+  string imageID = 1;
+}
+
+message GetImageRequest {
+  string imageTag = 1;
+  string projectID = 2; // TODO: infer from project name and user token
+}
+
+message Image {
+  string imageID = 1;
+  string projectID = 2;
+  string jobName = 3;
+  string dockerfile = 4;
+  string imageTag = 5;
+}

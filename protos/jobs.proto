@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package jobs;
+
+service Jobs {
+    rpc AddJobRevision (AddJobRevisionRequest) returns (AddJobRevisionResponse) {}
+    rpc GetJobRevisions (GetJobRevisionsRequest) returns (GetJobRevisionsResponse) {}
+    rpc GetJobRevisionByID (GetJobRevisionByIDRequest) returns (JobRevision) {}
+    rpc GetCurrentJobRevision (GetJobRevisionsRequest) returns (JobRevision) {}
+    rpc RunJobRevision(RunJobRevisionRequest) returns (JobRevision) {}
+}
+
+message JobRevision {
+    string jobRevisionID = 1;
+    int32 minInstances = 2;
+    int32 maxInstances = 3;
+    repeated int32 ports = 6;
+    map<string, string> envVars = 7;
+    string name = 10;
+    string imageTag = 11;
+}
+
+message AddJobRevisionRequest {
+    string projectID = 1; // TODO: infer from project name and user
+    JobRevision job = 2;
+}
+
+message AddJobRevisionResponse {
+    string jobRevisionID = 1;
+}
+
+message GetJobRevisionsRequest {
+    string projectID = 1;
+}
+
+message GetJobRevisionsResponse {
+    repeated JobRevision jobs = 1;
+}
+
+message GetJobRevisionByIDRequest {
+    string projectID = 1;
+    string jobID = 2;
+}
+
+message RunJobRevisionRequest {
+    string projectID = 1;
+    string jobID = 2;
+}

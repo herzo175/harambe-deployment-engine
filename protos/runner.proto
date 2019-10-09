@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "jobs.proto";
+
+package runner;
+
+service Runner {
+    rpc PushImage(PushImageRequest) returns (PushImageResponse) {}
+    rpc RunDeployment(jobs.JobRevision) returns (DeployJobResponse) {}
+    rpc DeleteDeployment(jobs.JobRevision) returns (DeployJobResponse) {}
+}
+
+message PushImageRequest {
+    string projectID = 1;
+    string imageID = 2;
+    string jobName = 3;
+    string dockerfile = 4;
+}
+
+message PushImageResponse {
+    string imageTag = 1;
+}
+
+message DeployJobResponse {}

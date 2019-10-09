@@ -1,8 +1,10 @@
 project: "example-project"
-deployment:
+jobs:
   - name: "example"
     min_instances: 1
     max_instances: 1
+    directory: "."
+    image: "gcr.io/harambe-6/5d75c816ff556e0013de1252-example:01DNR8Q9SERPA9Z68A1AAXFXB8"
     # TODO: support language versioning
     # TODO: support language: "dockerfile"
     language: "python"
@@ -12,7 +14,7 @@ deployment:
       - 8080
     env:
       # TODO: get env from secrets
-      - foo: "bar"
+      foo: "bar"
     build:
       # TODO: CI pipeline support?
       - "pip install -r requirements.txt"

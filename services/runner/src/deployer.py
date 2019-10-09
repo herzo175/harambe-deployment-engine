@@ -1,83 +1,237 @@
-import subprocess
+import time
 
-import templates
+import kubernetes
 
-# TODO: delete resource (rio rm)
+# TODO: move kube methods?
+def get_kubernetes_api(in_cluster=False):
+    if in_cluster:
+        kubernetes.config.load_incluster_config()
+    else:
+        kubernetes.config.load_kube_config()
 
-def deploy(app_name, deployment_id, storage_client, config):
-    deployment_path = templates.download_project(
-        deployment_id,
-        config["deployments_bucket"],
-        storage_client
+    return kubernetes.client
+
+
+def build_image(project_id, image_id, job_name, dockerfile, kube_api):
+    # TODO: get master repository name (harambe-6) from config
+    # NOTE: use job instead of pod?
+    docker_tag = f"gcr.io/harambe-6/{project_id}-{job_name}:{image_id}"
+    pod_name = f"kaniko-{image_id}".lower()
+    image_context = f"s3://deployments-to-registry/image-{image_id}.tar.gz"
+
+    pod_manifest = {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+            "name": pod_name
+        },
+        "spec": {
+            "restartPolicy": "Never",
+            "volumes": [{
+                "name": "kaniko-secret-gcp",
+                "secret": {
+                    "secretName": "kaniko-secret-gcp"
+                }
+            }],
+            "containers": [{
+                "image": "gcr.io/kaniko-project/executor:latest",
+                "name": "kaniko",
+                "args": [
+                    f"--dockerfile={dockerfile}",
+                    f"--context={image_context}",
+                    f"--destination={docker_tag}"
+                ],
+                "volumeMounts": [{
+                    "name": "kaniko-secret-gcp",
+                    "mountPath": "/secret"
+                }],
+                "env": [
+                    {
+                        "name": "GOOGLE_APPLICATION_CREDENTIALS",
+                        "value": "/secret/harambe-6-account.json"
+                    },
+                    {
+                        "name": "AWS_ACCESS_KEY_ID",
+                        "valueFrom": {
+                            "secretKeyRef": {
+                                "name": "kaniko-secrets",
+                                "key": "access-id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "AWS_SECRET_ACCESS_KEY",
+                        "valueFrom": {
+                            "secretKeyRef": {
+                                "name": "kaniko-secrets",
+                                "key": "secret-access-key"
+                            }
+                        }
+                    },
+                    {
+                        "name": "AWS_REGION",
+                        "valueFrom": {
+                            "secretKeyRef": {
+                                "name": "kaniko-secrets",
+                                "key": "region"
+                            }
+                        }
+                    },
+                    {
+                        "name": "S3_ENDPOINT",
+                        "valueFrom": {
+                            "secretKeyRef": {
+                                "name": "kaniko-secrets",
+                                "key": "endpoint"
+                            }
+                        }
+                    },
+                    {
+                        "name": "S3_FORCE_PATH_STYLE",
+                        "value": "true"
+                    },
+                ]
+            }]
+        }
+    }
+
+    # TODO: run in project namespace
+    resp = kube_api.create_namespaced_pod(
+        body=pod_manifest, namespace="default"
     )
 
-    with open(f"{deployment_path}/{config['deployment_file_name']}") as deployment_file:
-        config_string = deployment_file.read()
-        deployment_config = templates.load_config(config_string)
+    while True:
+        resp = kube_api.read_namespaced_pod(name=pod_name, namespace="default")
 
-        for deployment in deployment_config["deployment"]: # TODO: rename
-            tag = build_image(deployment_path, deployment_id, app_name, deployment, config)
-            push_images(tag)
-            run_deployment(deployment, tag)
+        if resp.status.phase in ["Failed", "Succeeded", "Unknown"]:
+            break
+
+        time.sleep(1)
+
+    kube_api.delete_namespaced_pod(name=pod_name, namespace="default")
+
+    return docker_tag
 
 
-def build_image(deployment_path, deployment_id, app_name, app_config, config):
-    dockerfile_name = f"{deployment_path}/{app_config['name']}.Dockerfile"
+def run_deployment(job, kube_api):
+    # TODO: use revisions
+    # NOTE: include project id in job name?
+    namespace = "default"
+    manifest = generate_job_manifest(job)
 
-    with open(dockerfile_name, "w") as dockerfile:
-        dockerfile.write(
-            templates.format_image(
-                app_config,
-                config["deployment_dockerfile_template"]
-            )
+    # Get service by service name
+    resp = None
+
+    try:
+        resp = kube_api.get_namespaced_custom_object(
+            group="serving.knative.dev",
+            version="v1alpha1",
+            name=job.name,
+            namespace=namespace,
+            plural="services"
+        )
+    except kubernetes.client.rest.ApiException as e:
+        if e.status != 404:
+            return e
+
+    if resp is None:
+        resp = kube_api.create_namespaced_custom_object(
+            group="serving.knative.dev",
+            version="v1alpha1",
+            namespace=namespace,
+            plural="services",
+            body=manifest
+        )
+    else:
+        resp = kube_api.patch_namespaced_custom_object(
+            group="serving.knative.dev",
+            version="v1alpha1",
+            name=job.name,
+            namespace=namespace,
+            plural="services",
+            body=manifest
         )
 
-    # TODO: store deployment metadata
-    docker_tag = f"registry.vask.io/{app_name}.{app_config['name']}:{deployment_id}"
-    # NOTE: use docker-slim?
-    out = subprocess.Popen([
-        "docker", "build",
-        "-t", docker_tag,
-        "-f", dockerfile_name,
-        deployment_path
-    ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    # check if deployment succeeded
+    # TODO: healthcheck
+    while True:
+        try:
+            kube_api.get_namespaced_custom_object(
+                group="serving.knative.dev",
+                version="v1alpha1",
+                namespace=namespace,
+                plural="routes",
+                name=job.name
+            )
+            # TODO: check traffic cutover
+            break
+        except kubernetes.client.rest.ApiException as e:
+            if e.status != 404:
+                return e
+            else:
+                time.sleep(1)
 
-    _, stderr = out.communicate()
-
-    if stderr is not None:
-        print(stderr)
-    else:
-        return docker_tag
-
-
-def push_images(docker_tag):
-    # TODO: docker login
-    out = subprocess.Popen([
-        "docker", "push", docker_tag
-    ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-    _, stderr = out.communicate()
-
-    if stderr is not None:
-        print(stderr)
+    return None
 
 
-def run_deployment(app_config, docker_tag):
-    # NOTE: possibly configure script from options+template
-    # TODO: rio promote
-    # TODO: namespaces
-    # TODO: load env at runtime
-    # TODO: save/return deployment ID
-    out = subprocess.Popen(
-        [
-            "rio", "run", "-p", "8080/http", # TODO: configurable port
-            "--name", app_config["name"],
-            f"--scale={app_config['min_instances']}-{app_config['max_instances']}",
-            docker_tag
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT
+def delete_deployment(job, kube_api):
+    namespace = "default"
+    manifest = generate_job_manifest(job)
+
+    kube_api.patch_namespaced_custom_object(
+        group="serving.knative.dev",
+        version="v1alpha1",
+        name=job.name,
+        namespace=namespace,
+        plural="services",
+        body=manifest
     )
 
-    stdout, stderr = out.communicate()
-    return {"message": stdout, "error": stderr}
+    # Keep checking if object still exists until it 404's
+    while True:
+        try:
+            kube_api.get_namespaced_custom_object(
+                group="serving.knative.dev",
+                version="v1alpha1",
+                namespace=namespace,
+                plural="routes",
+                name=job.name
+            )
+            time.sleep(1)
+        except kubernetes.client.rest.ApiException as e:
+            if e.status != 404:
+                return e
+            else:
+                break
+
+    return None
+
+
+def generate_job_manifest(job):
+    # TODO: env, endpoint, namespaces, concurrent requests, memory cap
+    return {
+        "apiVersion": "serving.knative.dev/v1alpha1",
+        "kind": "Service",
+        "metadata": {
+            "name": job.name
+        },
+        "spec": {
+            "template": {
+                "metadata": {
+                    "annotations": {
+                        "autoscaling.knative.dev/class": "kpa.autoscaling.knative.dev",
+                        "autoscaling.knative.dev/metric": "concurrency",
+                        "autoscaling.knative.dev/target": "100",
+                        "autoscaling.knative.dev/minScale": str(job.minInstances),
+                        "autoscaling.knative.dev/maxScale": str(job.maxInstances)
+                    }
+                },
+                "spec": {
+                    "containers": [{
+                        "name": job.name,
+                        "image": job.imageTag
+                    }]
+                }
+            }
+        }
+    }
