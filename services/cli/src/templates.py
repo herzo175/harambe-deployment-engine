@@ -25,11 +25,10 @@ def load_config(config_string):
     return yaml.safe_load(config_string)
 
 
-def format_image(deployment_config, template_file_path):
-    template_file_parts = template_file_path.split("/")
-    templateLoader = jinja2.FileSystemLoader(searchpath="." + "/".join(template_file_parts[:-1]))
+def format_image(deployment_config, template_filename):
+    templateLoader = jinja2.FileSystemLoader(searchpath=os.path.dirname(__file__))
     templateEnv = jinja2.Environment(loader=templateLoader)
-    template = templateEnv.get_template(template_file_parts[-1])
+    template = templateEnv.get_template(template_filename)
 
     return template.render(
         base_image=get_base_image(deployment_config["language"]),

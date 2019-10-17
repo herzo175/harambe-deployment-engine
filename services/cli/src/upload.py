@@ -71,14 +71,14 @@ def create_deployments(project_id, deployment_filename, deployment_root_dir):
             os.remove(output_zip)
 
 
-def create_dockerfile(deployment_path, job_config, template_path):
+def create_dockerfile(deployment_path, job_config, template):
     dockerfile_name = f"{job_config['name']}.Dockerfile"
 
     with open(os.path.join(deployment_path, dockerfile_name), "w") as dockerfile:
         dockerfile.write(
             templates.format_image(
                 job_config,
-                template_path
+                template
             )
         )
 
