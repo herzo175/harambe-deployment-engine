@@ -10,7 +10,6 @@ service Projects {
 
 message CreateProjectRequest {
     string name = 1;
-    string language = 2;
 }
 
 message CreateProjectResponse {

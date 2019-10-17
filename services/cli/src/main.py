@@ -1,46 +1,27 @@
-import argparse
-import os
+import click
 
 import upload
 
+cli = click.Group()
 
-def init(directory):
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--name", default=None, dest="name", help="project name")
-    parser.add_argument("--language", default="Dockerfile", dest="language", help="project language")
-
-    args = parser.parse_args()
+@cli.command()
+@click.argument("name")
+def init(name):
+    upload.create_project(name)
 
 
-def deploy(project_id, directory):
+@cli.command()
+@click.argument("project_id") # TODO: get project id from state file if not specified
+@click.option("--directory", default=".")
+@click.option("--deployment-file", default="deployment.yml")
+def deploy(project_id, directory, deployment_file):
     # zip project deployment.yml is in
     # NOTE: obscure zip file?
-    deployment_file_path = upload.find_file(directory, "deployment.yml")
-    assert deployment_file_path is not None, "missing deployment.yml"
+    deployment_file_path = upload.find_file(directory, deployment_file)
+    assert deployment_file_path is not None, f"missing {deployment_file}"
 
     upload.create_deployments(project_id, deployment_file_path, directory)
 
-    # os.remove(output_zip)
-    # NOTE: facade will invoke deployment runner
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    # TODO: sub cli for command
-    parser.add_argument("command", choices=["init", "deploy"])
-
-    parser.add_argument("--dir", default=".", dest="dir", help="project directory")
-
-    args = parser.parse_args()
-
-    if args.command == "init":
-        init(args.dir)
-    elif args.command == "deploy":
-        deploy(args.dir)
-    else:
-        print(f"invalid command {args.command}")
-
 
 if __name__ == "__main__":
-    main()
+    cli()

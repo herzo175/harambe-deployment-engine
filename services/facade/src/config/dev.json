@@ -1,0 +1,4 @@
+{
+    "runner_endpoint": "harambe-deployment-engine-runner:80",
+    "runner_host": "harambe-deployment-engine-runner.default.cluster.vask.io"
+}

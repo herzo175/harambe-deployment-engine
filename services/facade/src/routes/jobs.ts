@@ -53,6 +53,7 @@ function runJobRevision(datastore: Datastore, runner: DeploymentRunner) : (call:
             .findOne({project: new ObjectID(call.request.projectID), _id: call.request.jobID})
             .exec()
             .then(job => {
+                console.log(job);
                 runner.runDeployment(serializeJob(job), (err) => {
                     if (err) {
                         console.error(err);

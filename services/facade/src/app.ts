@@ -19,8 +19,15 @@ function main() {
     datastore.addModel("Image", Image);
     datastore.addModel("JobRevision", JobRevision);
 
+    console.log(config.getString("NODE_ENV"));
+    console.log(config.getString("runner_endpoint"));
+
     const storageClient = s3Client(config);
-    const deploymentRunner = new DeploymentRunner("host.docker.internal:5151", runnerProto());
+    const deploymentRunner = new DeploymentRunner(
+        config.getString("runner_endpoint"),
+        config.getString("runner_host"),
+        runnerProto()
+    );
 
     server.addService(
         deploymentsProto().Deployments.service,

@@ -1,8 +1,6 @@
 import * as grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 
-import { JobRevision } from "../models/jobRevision";
-
 const runnerProto: () => any = () => {
     const packageDefinition = protoLoader.loadSync(
         __dirname + '/../protos/runner.proto',
@@ -21,9 +19,11 @@ const runnerProto: () => any = () => {
 class DeploymentRunner {
     private proto = null;
     private endpoint: string = null;
+    private host: string = null;
 
-    constructor(endpoint: string, proto: any) {
+    constructor(endpoint: string, host: string, proto: any) {
         this.endpoint = endpoint;
+        this.host = host;
         this.proto = proto;
     }
 
@@ -42,7 +42,14 @@ class DeploymentRunner {
     }
 
     private getClient() {
-        return new this.proto.Runner(this.endpoint, grpc.credentials.createInsecure());
+        console.log(this.endpoint, this.host);
+        return new this.proto.Runner(
+            this.endpoint,
+            grpc.credentials.createInsecure(),
+            {
+                "grpc.default_authority": this.host
+            }
+        );
     }
 }
 

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='deployments',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x11\x64\x65ployments.proto\x12\x0b\x64\x65ployments\"\x9f\x01\n\rUploadRequest\x12\x10\n\x08imageZip\x18\x01 \x01(\x0c\x12\x11\n\tprojectID\x18\x02 \x01(\t\x12\x0f\n\x07jobName\x18\x03 \x01(\t\x12\x12\n\ndockerfile\x18\x04 \x01(\t\x12\x11\n\tdirectory\x18\x05 \x01(\t\x12\x10\n\x08language\x18\x06 \x01(\t\x12\x12\n\nbuildSteps\x18\x08 \x03(\t\x12\x0b\n\x03run\x18\t \x01(\t\"&\n\x13\x43reateImageResponse\x12\x0f\n\x07imageID\x18\x01 \x01(\t\"6\n\x0fGetImageRequest\x12\x10\n\x08imageTag\x18\x01 \x01(\t\x12\x11\n\tprojectID\x18\x02 \x01(\t\"b\n\x05Image\x12\x0f\n\x07imageID\x18\x01 \x01(\t\x12\x11\n\tprojectID\x18\x02 \x01(\t\x12\x0f\n\x07jobName\x18\x03 \x01(\t\x12\x12\n\ndockerfile\x18\x04 \x01(\t\x12\x10\n\x08imageTag\x18\x05 \x01(\t2\x97\x01\n\x0b\x44\x65ployments\x12H\n\x06Upload\x12\x1a.deployments.UploadRequest\x1a .deployments.CreateImageResponse\"\x00\x12>\n\x08GetImage\x12\x1c.deployments.GetImageRequest\x1a\x12.deployments.Image\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x11\x64\x65ployments.proto\x12\x0b\x64\x65ployments\"Y\n\rUploadRequest\x12\x10\n\x08imageZip\x18\x01 \x01(\x0c\x12\x11\n\tprojectID\x18\x02 \x01(\t\x12\x0f\n\x07jobName\x18\x03 \x01(\t\x12\x12\n\ndockerfile\x18\x04 \x01(\t\"&\n\x13\x43reateImageResponse\x12\x0f\n\x07imageID\x18\x01 \x01(\t\"6\n\x0fGetImageRequest\x12\x10\n\x08imageTag\x18\x01 \x01(\t\x12\x11\n\tprojectID\x18\x02 \x01(\t\"b\n\x05Image\x12\x0f\n\x07imageID\x18\x01 \x01(\t\x12\x11\n\tprojectID\x18\x02 \x01(\t\x12\x0f\n\x07jobName\x18\x03 \x01(\t\x12\x12\n\ndockerfile\x18\x04 \x01(\t\x12\x10\n\x08imageTag\x18\x05 \x01(\t2\x97\x01\n\x0b\x44\x65ployments\x12H\n\x06Upload\x12\x1a.deployments.UploadRequest\x1a .deployments.CreateImageResponse\"\x00\x12>\n\x08GetImage\x12\x1c.deployments.GetImageRequest\x1a\x12.deployments.Image\"\x00\x62\x06proto3')
 )
 
 
@@ -60,34 +60,6 @@ _UPLOADREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='directory', full_name='deployments.UploadRequest.directory', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='language', full_name='deployments.UploadRequest.language', index=5,
-      number=6, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='buildSteps', full_name='deployments.UploadRequest.buildSteps', index=6,
-      number=8, type=9, cpp_type=9, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='run', full_name='deployments.UploadRequest.run', index=7,
-      number=9, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -100,8 +72,8 @@ _UPLOADREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=35,
-  serialized_end=194,
+  serialized_start=34,
+  serialized_end=123,
 )
 
 
@@ -131,8 +103,8 @@ _CREATEIMAGERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=196,
-  serialized_end=234,
+  serialized_start=125,
+  serialized_end=163,
 )
 
 
@@ -169,8 +141,8 @@ _GETIMAGEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=236,
-  serialized_end=290,
+  serialized_start=165,
+  serialized_end=219,
 )
 
 
@@ -228,8 +200,8 @@ _IMAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=292,
-  serialized_end=390,
+  serialized_start=221,
+  serialized_end=319,
 )
 
 DESCRIPTOR.message_types_by_name['UploadRequest'] = _UPLOADREQUEST
@@ -274,8 +246,8 @@ _DEPLOYMENTS = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=393,
-  serialized_end=544,
+  serialized_start=322,
+  serialized_end=473,
   methods=[
   _descriptor.MethodDescriptor(
     name='Upload',

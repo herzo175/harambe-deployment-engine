@@ -1,3 +1,5 @@
+import os
+
 import runner_pb2
 import runner_pb2_grpc
 import deployer
@@ -7,8 +9,11 @@ import facade
 class Runner(runner_pb2_grpc.RunnerServicer):
 
     def __init__(self):
-        # TODO: get from outside class
-        self.kube_api = deployer.get_kubernetes_api()
+        # TODO: config class
+        # NOTE: kube_api class?
+        self.kube_api = deployer.get_kubernetes_api(
+            in_cluster=os.getenv("IN_CLUSTER", "false").lower() == "true"
+        )
 
     def PushImage(self, request, context):
         image_tag = deployer.build_image(

@@ -12,14 +12,13 @@ import jobs_pb2_grpc
 import templates
 
 
-def create_project(options):
+def create_project(name):
     # TODO: auth
     with grpc.insecure_channel("localhost:5050") as channel: # TODO: get endpoint from config
         stub = projects_pb2_grpc.ProjectsStub(channel)
         response = stub.CreateProject(
             projects_pb2.CreateProjectRequest(
-                name=options["name"],
-                language=options["language"]
+                name=name
             )
         )
 
@@ -53,7 +52,7 @@ def create_deployments(project_id, deployment_filename, deployment_root_dir):
 
         for job in deployment_config["jobs"]:
             job_path = os.path.join(deployment_root_dir, job['directory'])
-            output_zip = os.path.join(job_path, "deployment.tar.gz")
+            output_zip = os.path.join(job_path, f"{job['name']}.deployment.tar.gz")
 
             # determine image from job, upload and set image if not specified
             # NOTE: image must belong to project
@@ -68,7 +67,8 @@ def create_deployments(project_id, deployment_filename, deployment_root_dir):
             assert image is not None, "Unable to resolve image"
 
             job_id = add_job_revision(project_id, job, image)
-            # TODO: invoke deploy of job revision
+            run_job_revision(project_id, job_id)
+            os.remove(output_zip)
 
 
 def create_dockerfile(deployment_path, job_config, template_path):
@@ -100,15 +100,11 @@ def upload_deployment(project_id, dockerfile, image_zip, job): # NOTE: take depl
                     projectID=project_id,
                     jobName=job["name"],
                     dockerfile=dockerfile,
-                    imageZip=image_zip_file.read(),
-                    directory=job["directory"],
-                    language=job["language"],
-                    buildSteps=job["buildSteps"],
-                    run=job["name"]
+                    imageZip=image_zip_file.read()
                 )
             )
 
-            return response.imageID
+            return response.imageTag
 
 
 def get_image(project_id, image_tag):
@@ -122,7 +118,7 @@ def get_image(project_id, image_tag):
             )
         )
 
-        return response.imageID
+        return response
 
 
 def add_job_revision(project_id, job, image_tag):

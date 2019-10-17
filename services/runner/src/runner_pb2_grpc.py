@@ -25,6 +25,11 @@ class RunnerStub(object):
         request_serializer=jobs__pb2.JobRevision.SerializeToString,
         response_deserializer=runner__pb2.DeployJobResponse.FromString,
         )
+    self.DeleteDeployment = channel.unary_unary(
+        '/runner.Runner/DeleteDeployment',
+        request_serializer=jobs__pb2.JobRevision.SerializeToString,
+        response_deserializer=runner__pb2.DeployJobResponse.FromString,
+        )
 
 
 class RunnerServicer(object):
@@ -45,6 +50,13 @@ class RunnerServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def DeleteDeployment(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_RunnerServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -55,6 +67,11 @@ def add_RunnerServicer_to_server(servicer, server):
       ),
       'RunDeployment': grpc.unary_unary_rpc_method_handler(
           servicer.RunDeployment,
+          request_deserializer=jobs__pb2.JobRevision.FromString,
+          response_serializer=runner__pb2.DeployJobResponse.SerializeToString,
+      ),
+      'DeleteDeployment': grpc.unary_unary_rpc_method_handler(
+          servicer.DeleteDeployment,
           request_deserializer=jobs__pb2.JobRevision.FromString,
           response_serializer=runner__pb2.DeployJobResponse.SerializeToString,
       ),

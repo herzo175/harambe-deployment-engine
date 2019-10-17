@@ -17,7 +17,7 @@ class DeploymentsStub(object):
     self.Upload = channel.unary_unary(
         '/deployments.Deployments/Upload',
         request_serializer=deployments__pb2.UploadRequest.SerializeToString,
-        response_deserializer=deployments__pb2.CreateImageResponse.FromString,
+        response_deserializer=deployments__pb2.Image.FromString,
         )
     self.GetImage = channel.unary_unary(
         '/deployments.Deployments/GetImage',
@@ -50,7 +50,7 @@ def add_DeploymentsServicer_to_server(servicer, server):
       'Upload': grpc.unary_unary_rpc_method_handler(
           servicer.Upload,
           request_deserializer=deployments__pb2.UploadRequest.FromString,
-          response_serializer=deployments__pb2.CreateImageResponse.SerializeToString,
+          response_serializer=deployments__pb2.Image.SerializeToString,
       ),
       'GetImage': grpc.unary_unary_rpc_method_handler(
           servicer.GetImage,

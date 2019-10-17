@@ -14,7 +14,7 @@ def serve():
         server
     )
 
-    server.add_insecure_port("[::]:5151")
+    server.add_insecure_port("[::]:8080")
     server.start()
     # server.wait_for_termination() # NOTE: upgrade grpc version (need python 3.8)
     try:

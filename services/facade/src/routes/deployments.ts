@@ -9,7 +9,7 @@ import { Datastore } from "../clients/datastore";
 import { Image } from "../models/image";
 import { DeploymentRunner } from "../clients/runner";
 import { Document } from "mongoose";
-import { ObjectID } from "bson";
+import { ObjectID, serialize } from "bson";
 
 const deploymentsProto: () => any = () => {
     const packageDefinition = protoLoader.loadSync(
@@ -95,14 +95,11 @@ const upload = (
                                 project: new ObjectID(call.request.projectID), // TODO: imply project id from project name and user
                                 jobName: call.request.jobName,
                                 dockerfile: call.request.dockerfile,
-                                imageTag: resp.imageTag,
-                                directory: call.request.directory,
-                                language: call.request.language,
-                                buildSteps: call.request.buildSteps,
-                                run: call.request.run
+                                imageTag: resp.imageTag
                             })
                             .then(image => {
-                                callback(null, {imageID: image._id});
+                                console.log(serializeImage(image));
+                                callback(null, serializeImage(image));
                             })
                             .catch(err => {
                                 console.error("error saving image:", err);

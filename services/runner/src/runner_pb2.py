@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='runner',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0crunner.proto\x12\x06runner\x1a\njobs.proto\"[\n\x10PushImageRequest\x12\x11\n\tprojectID\x18\x01 \x01(\t\x12\x0f\n\x07imageID\x18\x02 \x01(\t\x12\x0f\n\x07jobName\x18\x03 \x01(\t\x12\x12\n\ndockerfile\x18\x04 \x01(\t\"%\n\x11PushImageResponse\x12\x10\n\x08imageTag\x18\x01 \x01(\t\"\x13\n\x11\x44\x65ployJobResponse2\x8d\x01\n\x06Runner\x12\x42\n\tPushImage\x12\x18.runner.PushImageRequest\x1a\x19.runner.PushImageResponse\"\x00\x12?\n\rRunDeployment\x12\x11.jobs.JobRevision\x1a\x19.runner.DeployJobResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0crunner.proto\x12\x06runner\x1a\njobs.proto\"[\n\x10PushImageRequest\x12\x11\n\tprojectID\x18\x01 \x01(\t\x12\x0f\n\x07imageID\x18\x02 \x01(\t\x12\x0f\n\x07jobName\x18\x03 \x01(\t\x12\x12\n\ndockerfile\x18\x04 \x01(\t\"%\n\x11PushImageResponse\x12\x10\n\x08imageTag\x18\x01 \x01(\t\"\x13\n\x11\x44\x65ployJobResponse2\xd1\x01\n\x06Runner\x12\x42\n\tPushImage\x12\x18.runner.PushImageRequest\x1a\x19.runner.PushImageResponse\"\x00\x12?\n\rRunDeployment\x12\x11.jobs.JobRevision\x1a\x19.runner.DeployJobResponse\"\x00\x12\x42\n\x10\x44\x65leteDeployment\x12\x11.jobs.JobRevision\x1a\x19.runner.DeployJobResponse\"\x00\x62\x06proto3')
   ,
   dependencies=[jobs__pb2.DESCRIPTOR,])
 
@@ -168,7 +168,7 @@ _RUNNER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   serialized_start=190,
-  serialized_end=331,
+  serialized_end=399,
   methods=[
   _descriptor.MethodDescriptor(
     name='PushImage',
@@ -183,6 +183,15 @@ _RUNNER = _descriptor.ServiceDescriptor(
     name='RunDeployment',
     full_name='runner.Runner.RunDeployment',
     index=1,
+    containing_service=None,
+    input_type=jobs__pb2._JOBREVISION,
+    output_type=_DEPLOYJOBRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='DeleteDeployment',
+    full_name='runner.Runner.DeleteDeployment',
+    index=2,
     containing_service=None,
     input_type=jobs__pb2._JOBREVISION,
     output_type=_DEPLOYJOBRESPONSE,

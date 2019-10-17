@@ -7,7 +7,7 @@ def get_kubernetes_api(in_cluster=False):
     if in_cluster:
         kubernetes.config.load_incluster_config()
     else:
-        kubernetes.config.load_kube_config()
+        kubernetes.config.load_kube_config(config_file=".kubeconfig")
 
     return kubernetes.client
 
@@ -28,9 +28,9 @@ def build_image(project_id, image_id, job_name, dockerfile, kube_api):
         "spec": {
             "restartPolicy": "Never",
             "volumes": [{
-                "name": "kaniko-secret-gcp",
+                "name": "kaniko-secrets",
                 "secret": {
-                    "secretName": "kaniko-secret-gcp"
+                    "secretName": "kaniko-secrets"
                 }
             }],
             "containers": [{
@@ -42,7 +42,7 @@ def build_image(project_id, image_id, job_name, dockerfile, kube_api):
                     f"--destination={docker_tag}"
                 ],
                 "volumeMounts": [{
-                    "name": "kaniko-secret-gcp",
+                    "name": "kaniko-secrets",
                     "mountPath": "/secret"
                 }],
                 "env": [
@@ -55,7 +55,7 @@ def build_image(project_id, image_id, job_name, dockerfile, kube_api):
                         "valueFrom": {
                             "secretKeyRef": {
                                 "name": "kaniko-secrets",
-                                "key": "access-id"
+                                "key": "account-id"
                             }
                         }
                     },
@@ -114,7 +114,8 @@ def build_image(project_id, image_id, job_name, dockerfile, kube_api):
 
 
 def run_deployment(job, kube_api):
-    # TODO: use revisions
+    # TODO: rolling deploy
+    # TODO: get namespace
     # NOTE: include project id in job name?
     namespace = "default"
     manifest = generate_job_manifest(job)
@@ -208,7 +209,12 @@ def delete_deployment(job, kube_api):
 
 
 def generate_job_manifest(job):
-    # TODO: env, endpoint, namespaces, concurrent requests, memory cap
+    # TODO: concurrent requests, memory cap
+    # TODO: do not allow implicit use of gcp service account
+    # TODO: ^ create gcloud iam service-account+k8 service account+iam -> k8 binding per namespace
+    # TODO: resolve secrets for env
+    # TODO: DNS records for service
+    # TODO: http1.1 configurable
     return {
         "apiVersion": "serving.knative.dev/v1alpha1",
         "kind": "Service",
@@ -229,7 +235,15 @@ def generate_job_manifest(job):
                 "spec": {
                     "containers": [{
                         "name": job.name,
-                        "image": job.imageTag
+                        "image": job.imageTag,
+                        "env": [{
+                            "name": name,
+                            "value": job.envVars[name]
+                        } for name in job.envVars],
+                        "ports": {
+                            "name": "h2c",
+                            "containerPort": 8080
+                        }
                     }]
                 }
             }

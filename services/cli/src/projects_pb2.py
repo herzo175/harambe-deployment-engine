@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='projects',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0eprojects.proto\x12\x08projects\"6\n\x14\x43reateProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08language\x18\x02 \x01(\t\"*\n\x15\x43reateProjectResponse\x12\x11\n\tprojectID\x18\x01 \x01(\t\"*\n\x15GetProjectByIDRequest\x12\x11\n\tprojectID\x18\x01 \x01(\t\"2\n\x0fProjectResponse\x12\x11\n\tprojectID\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"\"\n\x12GetProjectsRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"?\n\x10ProjectsResponse\x12+\n\x08projects\x18\x01 \x03(\x0b\x32\x19.projects.ProjectResponse2\xf9\x01\n\x08Projects\x12R\n\rCreateProject\x12\x1e.projects.CreateProjectRequest\x1a\x1f.projects.CreateProjectResponse\"\x00\x12N\n\x0eGetProjectByID\x12\x1f.projects.GetProjectByIDRequest\x1a\x19.projects.ProjectResponse\"\x00\x12I\n\x0bGetProjects\x12\x1c.projects.GetProjectsRequest\x1a\x1a.projects.ProjectsResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0eprojects.proto\x12\x08projects\"$\n\x14\x43reateProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"*\n\x15\x43reateProjectResponse\x12\x11\n\tprojectID\x18\x01 \x01(\t\"*\n\x15GetProjectByIDRequest\x12\x11\n\tprojectID\x18\x01 \x01(\t\"2\n\x0fProjectResponse\x12\x11\n\tprojectID\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"\"\n\x12GetProjectsRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"?\n\x10ProjectsResponse\x12+\n\x08projects\x18\x01 \x03(\x0b\x32\x19.projects.ProjectResponse2\xf9\x01\n\x08Projects\x12R\n\rCreateProject\x12\x1e.projects.CreateProjectRequest\x1a\x1f.projects.CreateProjectResponse\"\x00\x12N\n\x0eGetProjectByID\x12\x1f.projects.GetProjectByIDRequest\x1a\x19.projects.ProjectResponse\"\x00\x12I\n\x0bGetProjects\x12\x1c.projects.GetProjectsRequest\x1a\x1a.projects.ProjectsResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -39,13 +39,6 @@ _CREATEPROJECTREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='language', full_name='projects.CreateProjectRequest.language', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -59,7 +52,7 @@ _CREATEPROJECTREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=28,
-  serialized_end=82,
+  serialized_end=64,
 )
 
 
@@ -89,8 +82,8 @@ _CREATEPROJECTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=84,
-  serialized_end=126,
+  serialized_start=66,
+  serialized_end=108,
 )
 
 
@@ -120,8 +113,8 @@ _GETPROJECTBYIDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=128,
-  serialized_end=170,
+  serialized_start=110,
+  serialized_end=152,
 )
 
 
@@ -158,8 +151,8 @@ _PROJECTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=172,
-  serialized_end=222,
+  serialized_start=154,
+  serialized_end=204,
 )
 
 
@@ -189,8 +182,8 @@ _GETPROJECTSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=224,
-  serialized_end=258,
+  serialized_start=206,
+  serialized_end=240,
 )
 
 
@@ -220,8 +213,8 @@ _PROJECTSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=260,
-  serialized_end=323,
+  serialized_start=242,
+  serialized_end=305,
 )
 
 _PROJECTSRESPONSE.fields_by_name['projects'].message_type = _PROJECTRESPONSE
@@ -283,8 +276,8 @@ _PROJECTS = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=326,
-  serialized_end=575,
+  serialized_start=308,
+  serialized_end=557,
   methods=[
   _descriptor.MethodDescriptor(
     name='CreateProject',
